@@ -13,7 +13,7 @@ public:
 
 	void render( double dt_sec ) override;
 
-	void on_event( const SDL_Event &event ) override;
+	void on_event( const vv::Event &event ) override;
 
 private:
 	float m_time;

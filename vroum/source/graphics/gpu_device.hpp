@@ -1,7 +1,7 @@
 #pragma once
 
 #include "vv_headers.hpp"
-#include "graphics/window_system.hpp"
+#include "window/window_system.hpp"
 
 namespace vv
 {

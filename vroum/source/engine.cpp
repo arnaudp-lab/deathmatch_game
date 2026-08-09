@@ -24,12 +24,19 @@ void Engine::run()
 	double current_dt = target_dt; // special case for the first dt
 	double dt_max = 4.0 * target_dt;
 
+	std::vector<Event> events;
+
 	while(m_running)
 	{
 		auto previous_time = current_time;
 
 		// Dispatch Events
-		m_window_sys.poll_events();
+		events = m_window_sys.poll_events();
+		for(auto it = m_layers.rbegin(); it != m_layers.rend(); ++it)
+		{
+			for(auto & e: events )
+				it->get()->on_event(e);
+		}
 
 		// Game update
 		for(auto &layer: m_layers)

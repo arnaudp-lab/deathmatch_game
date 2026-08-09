@@ -1,4 +1,5 @@
 #include "gpu_device.hpp"
+#include "core/logger.hpp"
 #include <SDL3/SDL_video.h>
 #include <thread>
 #include <glad/glad.h>

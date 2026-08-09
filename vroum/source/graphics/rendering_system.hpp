@@ -4,7 +4,7 @@
 
 #include "graphics/gpu_device.hpp"
 #include "render_cmd.hpp"
-#include "graphics/window_system.hpp"
+#include "window/window_system.hpp"
 
 #include <SDL3/SDL.h>
 

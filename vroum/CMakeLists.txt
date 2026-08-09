@@ -11,8 +11,14 @@ target_compile_features(vroum PUBLIC
 
 # Source files
 target_sources( vroum PRIVATE
-  source/graphics/window_system.cpp
-  source/graphics/window_system.hpp
+  source/window/sdl_wrapper.cpp
+  source/window/sdl_wrapper.hpp
+  source/window/input.cpp
+  source/window/input.hpp
+  source/window/events.hpp
+  source/window/window_system.cpp
+  source/window/window_system.hpp
+
   source/graphics/gpu_device.cpp
   source/graphics/gpu_device.hpp
   source/graphics/rendering_system.cpp

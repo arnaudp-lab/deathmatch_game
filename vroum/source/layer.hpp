@@ -1,7 +1,6 @@
 #pragma once
 
-#include <SDL3/SDL_events.h>
-#include "graphics/window_system.hpp"
+#include "window/window_system.hpp"
 #include "vv_headers.hpp"
 
 namespace vv
@@ -25,7 +24,7 @@ public:
 
 	virtual void update( double dt_sec ) = 0;
 
-	virtual void on_event( const SDL_Event &event ) = 0;
+	virtual void on_event( const Event &event ) = 0;
 
 protected:
 	Engine *m_app;

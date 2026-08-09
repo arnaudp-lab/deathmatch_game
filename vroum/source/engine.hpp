@@ -1,8 +1,9 @@
 #pragma once
 
 #include "vv_headers.hpp"
+#include "core/logger.hpp"
 #include "layer.hpp"
-#include "graphics/window_system.hpp"
+#include "window/window_system.hpp"
 #include "graphics/rendering_system.hpp"
 #include "core/engine_parameters.hpp"
 
