@@ -3,16 +3,17 @@
 #include <variant>
 #include <memory>
 #include <SDL3/SDL.h>
+#include "window_system.hpp"
 
 namespace vv
 {
 
 struct InitializeCmd
 {
-	InitializeCmd(SDL_Window *window): window(window) {}
+	InitializeCmd(WindowSystem *window): window(window) {}
 	InitializeCmd() = default;
 
-	SDL_Window *window;
+	WindowSystem *window = nullptr;
 };
 
 struct ShutdownCmd
@@ -20,16 +21,22 @@ struct ShutdownCmd
 	// empty
 };
 
+struct SwapBuffers
+{
+	// empty
+};
+
 enum class RenderCmdType
 {
-	initialize, shutdown
+	initialize, shutdown, swap_buffers
 };
 
 struct RenderCmd
 {
 	using RenderCmdVariant = std::variant<
 		std::shared_ptr<InitializeCmd>,
-		ShutdownCmd
+		ShutdownCmd,
+		SwapBuffers
 	>;
 
 	RenderCmd() = default;

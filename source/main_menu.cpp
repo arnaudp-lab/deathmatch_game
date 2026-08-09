@@ -1,5 +1,4 @@
 #include "main_menu.hpp"
-#include <iostream>
 #include <cmath>
 
 MainMenu::~MainMenu()

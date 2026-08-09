@@ -1,16 +1,16 @@
 #pragma once
 
 #include "vv_headers.hpp"
-#include "core/shader.hpp"
+
+#include "graphics/gpu_device.hpp"
 #include "render_cmd.hpp"
+#include "graphics/window_system.hpp"
 
 #include <SDL3/SDL.h>
 
 #include <deque>
 #include <mutex>
 #include <thread>
-#include <atomic>
-#include <memory>
 #include <condition_variable>
 
 namespace vv
@@ -24,32 +24,32 @@ public:
 	RenderingSystem(const RenderingSystem &) = delete;
 	RenderingSystem &operator=(const RenderingSystem &) = delete;
 
-	bool init( SDL_Window *window );
+	Error init( WindowSystem *window_sys );
 
 	void shutdown();
 
-	void send_render_command(const RenderCmd &hello);
+	void send_render_command( const RenderCmd &cmd );
 	
 private:
-	
 	void start_thread();
 
 	void worker_loop();
 
-	void init_opengl(SDL_Window *window);
+	void execute_cmd( const RenderCmd &cmd);
 
+	// Just call m_device.init/shutdown, used as rendercommand callback
+	void init_opengl( WindowSystem *window_sys );
 	void shutdown_opengl();
 
-	void execute_cmd(const RenderCmd &cmd);
-
+	// Management of the rendering thread
 	std::mutex m_mtx;
 	std::condition_variable m_cv;
 	std::deque<RenderCmd> m_command_queue;
 	std::thread m_gpu_thread;
 	bool m_worker_running = true;
 
-	bool m_opengl_initialized = false;
-	SDL_GLContext m_context;
+	// API-agnostic device, handles context + render commands to GPU
+	GPUDevice m_device;
 };
 
 } // namespace vv

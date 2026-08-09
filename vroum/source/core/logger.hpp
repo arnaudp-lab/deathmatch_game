@@ -81,12 +81,12 @@ private:
 
 #else
 
-	#define VV_DEBUG(...) vv::Logger::get().log( LogLevel::debug, __VA_ARGS__ )
-	#define VV_TRACE(...) vv::Logger::get().log( LogLevel::trace, __VA_ARGS__ )
+	#define VV_DEBUG(...) vv::Logger::get().log( vv::LogLevel::debug, __VA_ARGS__ )
+	#define VV_TRACE(...) vv::Logger::get().log( vv::LogLevel::trace, __VA_ARGS__ )
 
 #endif
 
-#define VV_INFO(...)  vv::Logger::get().log( LogLevel::info, __VA_ARGS__ )
-#define VV_WARN(...)  vv::Logger::get().log( LogLevel::warn, __VA_ARGS__ )
-#define VV_ERROR(...) vv::Logger::get().log( LogLevel::error, __VA_ARGS__ )
-#define VV_FATAL(...) vv::Logger::get().log( LogLevel::fatal, __VA_ARGS__ )
+#define VV_INFO(...)  vv::Logger::get().log( vv::LogLevel::info, __VA_ARGS__ )
+#define VV_WARN(...)  vv::Logger::get().log( vv::LogLevel::warn, __VA_ARGS__ )
+#define VV_ERROR(...) vv::Logger::get().log( vv::LogLevel::error, __VA_ARGS__ )
+#define VV_FATAL(...) vv::Logger::get().log( vv::LogLevel::fatal, __VA_ARGS__ )

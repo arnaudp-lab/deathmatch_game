@@ -1,6 +1,6 @@
+#include "core/errors.hpp"
 #include "vv.hpp"
 #include "main_menu.hpp"
-#include <iostream>
 
 vv::EngineParameters load_params()
 {
@@ -19,9 +19,15 @@ int main() {
 
 	vv::Engine application (params);
 
-	application.init_systems();
+	vv::Error err = vv::Error::ok;
+	
+	err = application.init_systems();
 
-	application.add_layer<MainMenu>();
+	VV_ERROR("Any Error ?: ", vv::get_err_msg(err) );
+
+	err = application.add_layer<MainMenu>();
+
+	VV_ERROR("Any Error ?: ", vv::get_err_msg(err) );
 
 	application.run();
 

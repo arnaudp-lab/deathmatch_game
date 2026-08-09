@@ -11,16 +11,24 @@ target_compile_features(vroum PUBLIC
 
 # Source files
 target_sources( vroum PRIVATE
+  source/graphics/window_system.cpp
+  source/graphics/window_system.hpp
+  source/graphics/gpu_device.cpp
+  source/graphics/gpu_device.hpp
   source/graphics/rendering_system.cpp
   source/graphics/rendering_system.hpp
   source/graphics/render_cmd.hpp
-  source/graphics/core/shader.hpp
-  source/graphics/core/shader.cpp
+  
+  source/core/logger.cpp
+  source/core/logger.hpp
+  source/core/errors.hpp
+  source/core/errors.cpp
+  source/core/engine_parameters.hpp
+  source/core/engine_parameters.hpp
+
+  source/layer.hpp
   source/engine.cpp
   source/engine.hpp
-  source/logger.cpp
-  source/logger.hpp
-  source/layer.hpp
 )
 
 # Do not build any example / tests

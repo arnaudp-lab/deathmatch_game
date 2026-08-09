@@ -1,5 +1,7 @@
 #include "engine.hpp"
-#include <iostream>
+#include "core/logger.hpp"
+#include "graphics/render_cmd.hpp"
+
 #include <chrono>
 #include <thread>
 
@@ -18,15 +20,16 @@ Engine::~Engine()
 void Engine::run()
 {
 	auto current_time = std::chrono::steady_clock::now();
-	double target_dt = 1.0 / m_params.target_fps;
+	double target_dt = 1.0 / (float)m_params.fps;
 	double current_dt = target_dt; // special case for the first dt
+	double dt_max = 4.0 * target_dt;
 
 	while(m_running)
 	{
 		auto previous_time = current_time;
 
 		// Dispatch Events
-		dispatch_events();
+		m_window_sys.poll_events();
 
 		// Game update
 		for(auto &layer: m_layers)
@@ -35,10 +38,18 @@ void Engine::run()
 		}
 
 		// Rendering
+		// TODO: NON ! Chaque layer va définir sa pipeline et on va juste lancer un job pour appliquer la pipeline
 		for(auto &layer: m_layers)
 		{
 			layer->render( current_dt );
 		}
+
+		// Swap buffers
+		RenderCmd cmd (RenderCmdType::swap_buffers, SwapBuffers());
+		m_graphics_sys.send_render_command(cmd);
+
+		// Check if we should still be running
+		m_running = !m_window_sys.should_close();
 
 		// Tick update
 		current_time = std::chrono::steady_clock::now();
@@ -49,78 +60,34 @@ void Engine::run()
 			std::this_thread::sleep_for( dseconds(target_dt - delta_time_seconds) );
 		}
 
-		current_dt = std::max( target_dt, delta_time_seconds );
+		current_dt = (delta_time_seconds < target_dt) ? target_dt : ((delta_time_seconds > dt_max) ? dt_max : delta_time_seconds);
 	}
 }
 
-void Engine::dispatch_events()
+Error Engine::init_systems()
 {
-	// Save all the events in one array
-	SDL_Event event;
-	std::vector<SDL_Event> events;
-	while( SDL_PollEvent(&event) )
-	{
-		events.push_back(event);
+	Error err;
 
-		if(event.type == SDL_EVENT_QUIT)
-		{
-			m_running = false;
-		}
-	}
-
-	// and propagate them in order, one layer after the other
-	for(int i = m_layers.size() - 1; i >= 0; --i)
-	{
-		for(SDL_Event &event: events)
-			m_layers[i]->on_event(event);
-	}
-}
-
-bool Engine::init_systems()
-{
-	if( !init_window() )
+	err = m_window_sys.init( m_params );
+	if( err != Error::ok )
 	{
 		VV_ERROR("Cannot initialize SDL3");
-		return false;
+		return err;
 	}
 
-	if( !m_graphics_sys.init( m_window ) )
+	err = m_graphics_sys.init( &m_window_sys );
+	if( err != Error::ok )
 	{
 		VV_ERROR("Cannot initialize The graphic system");
-		return false;
+		shutdown_systems();
+		return err;
 	}
 
-	return true;
+	return Error::ok;
 }
 
 void Engine::shutdown_systems()
 {
 	m_graphics_sys.shutdown();
-	shutdown_window();
-}
-
-void Engine::shutdown_window()
-{
-	SDL_DestroyWindow(m_window);
-}
-
-bool Engine::init_window()
-{
-	assert( m_window == nullptr ); // double initialization
-
-	if (! SDL_Init( SDL_INIT_VIDEO | SDL_INIT_EVENTS) )
-	{
-		VV_ERROR("Error when calling SDL_Init", SDL_GetError());
-		return false;
-	}
-
-	SDL_WindowFlags window_flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE | SDL_WINDOW_HIGH_PIXEL_DENSITY;
-	m_window = SDL_CreateWindow(m_params.window_title.c_str(), m_params.window_width, m_params.window_height, window_flags );
-
-	if( m_window == nullptr ) {
-		VV_ERROR("Error when calling SDL_CreateWindow: ", SDL_GetError());
-		return false;
-	}
-
-	return true;
+	m_window_sys.shutdown();
 }

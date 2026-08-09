@@ -1,5 +1,6 @@
+#include "core/logger.hpp"
+#include "vv_headers.hpp"
 #include "rendering_system.hpp"
-#include <iostream>
 #include <glad/glad.h>
 
 using namespace vv;
@@ -56,7 +57,11 @@ void RenderingSystem::execute_cmd(const RenderCmd &cmd)
 	case RenderCmdType::shutdown:
 		this->shutdown_opengl();
 		break;
+	case RenderCmdType::swap_buffers:
+		m_device.swap_buffers();
+		break;
 	default:
+		VV_WARN("Unknown command type passed to the rendering system: ", static_cast<int>(cmd.type) );
 		break;
 	}
 }
@@ -70,17 +75,17 @@ void RenderingSystem::send_render_command(const RenderCmd &cmd)
 	m_cv.notify_one();
 }
 
-bool RenderingSystem::init( SDL_Window *window )
+Error RenderingSystem::init( WindowSystem *window_sys )
 {
 	// start the rendering thread
 	start_thread();
 
 	// immediatly send a command to the opengl thread
 	// that tells it to initialize opengl on its end
-	RenderCmd cmd (RenderCmdType::initialize, std::make_shared<InitializeCmd>(window));
+	RenderCmd cmd (RenderCmdType::initialize, std::make_shared<InitializeCmd>(window_sys));
 	send_render_command(cmd);
 
-	return true;
+	return Error::ok;
 }
 
 void RenderingSystem::shutdown()
@@ -95,49 +100,19 @@ void RenderingSystem::shutdown()
 	m_gpu_thread.join();
 }
 
-void RenderingSystem::init_opengl( SDL_Window *window )
+void RenderingSystem::init_opengl( WindowSystem *window_sys )
 {
-	m_opengl_initialized = false;
-
-	// Set up the SDL side
-	SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-	SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-	SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-
-	m_context = SDL_GL_CreateContext(window);
-
-	if(m_context == nullptr)
+	Error err = m_device.init(window_sys);
+	if( err != Error::ok )
 	{
-		VV_ERROR("Cannot create context: ", SDL_GetError());
+		VV_FATAL("Could not initialize the GPU device");
+		VV_ASSERT(false, "Could not initialize GPU Device, asserted false from GPU thread [TODO: handle this differently if needed?]");
 		return;
 	}
-
-	SDL_GL_MakeCurrent(window, m_context);
-
-	if( !gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress) )
-	{
-		VV_ERROR("Cannot initialize GLAD");
-		return;
-	}
-
-	int w_width = 0, w_height = 0;
-	if (! SDL_GetWindowSizeInPixels(window, &w_width, &w_height) )
-	{
-		VV_ERROR("SDL_GetWindowSizeInPixels failed: ", SDL_GetError());
-		return;
-	}
-
-	glViewport(0, 0, w_width, w_height);
-
-	m_opengl_initialized = true;
 }
 
 void RenderingSystem::shutdown_opengl()
 {
-	SDL_GL_DestroyContext(m_context);
+	m_device.shutdown();
 	m_worker_running = false;
 }

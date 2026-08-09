@@ -1,7 +1,8 @@
 #pragma once
 
 #include <SDL3/SDL_events.h>
-#include "vv_errors.hpp"
+#include "graphics/window_system.hpp"
+#include "vv_headers.hpp"
 
 namespace vv
 {
@@ -29,6 +30,7 @@ public:
 protected:
 	Engine *m_app;
 	RenderingSystem *m_rend;
+	WindowSystem *m_win;
 };
 
 } // namespace vv
