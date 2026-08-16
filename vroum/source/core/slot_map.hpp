@@ -11,9 +11,10 @@ template <typename T>
 struct Handle
 {
     static Handle<T> null() { return {.id = std::numeric_limits<u32>::max(), .gen=0}; };
+    bool is_null() const { return id == std::numeric_limits<u32>::max(); }
 
-    u32 id;
-    u32 gen;
+    u32 id = std::numeric_limits<u32>::max();
+    u32 gen = 0;
 };
 
 template <typename T>
@@ -46,6 +47,7 @@ public:
 
     const T &get(Handle<T> handle) const
     {
+        VV_ASSERT( !handle.is_null(), "You Passed a null handle");
         VV_ASSERT( handle.id < m_elements.size(), "Invalid handle" );
         VV_ASSERT( (m_generations[handle.id] == handle.gen), "Use after free for handle");
         VV_ASSERT( (m_elements[handle.id].has_value()), "Use after free for handle");
@@ -55,6 +57,7 @@ public:
 
     T &get(Handle<T> handle)
     {
+        VV_ASSERT( !handle.is_null(), "You Passed a null handle");
         VV_ASSERT( handle.id < m_elements.size(), "Invalid handle" );
         VV_ASSERT( (m_generations[handle.id] == handle.gen), "Use after free for handle");
         VV_ASSERT( (m_elements[handle.id].has_value()), "Use after free for handle");
@@ -64,6 +67,11 @@ public:
 
     void del(Handle<T> handle)
     {
+        VV_ASSERT( !handle.is_null(), "You Passed a null handle");
+        VV_ASSERT( handle.id < m_elements.size(), "Invalid handle" );
+        VV_ASSERT( (m_generations[handle.id] == handle.gen), "Double free for handle");
+        VV_ASSERT( (m_elements[handle.id].has_value()), "Double free for handle");
+
         m_elements[handle.id].reset();
         m_generations[handle.id] += 1;
         m_available_indices.push_back(handle.id);

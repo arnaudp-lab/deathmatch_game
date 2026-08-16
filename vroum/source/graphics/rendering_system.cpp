@@ -5,7 +5,8 @@
 #include <glad/glad.h>
 #include <type_traits>
 
-using namespace vv;
+namespace vv
+{
 
 RenderingSystem::RenderingSystem()
 {
@@ -49,7 +50,7 @@ void RenderingSystem::worker_loop()
 	}
 }
 
-void RenderingSystem::execute_cmd(const RenderCmd &cmd)
+void RenderingSystem::execute_cmd( RenderCmd &&cmd )
 {
 	std::visit( [this](auto &&c )
 	{
@@ -57,14 +58,20 @@ void RenderingSystem::execute_cmd(const RenderCmd &cmd)
 
 		if constexpr ( std::is_same_v<T, InitializeCmd>)
 			this->init_opengl( c.window );
-
-		if constexpr ( std::is_same_v<T, SwapBuffersCmd>)
+		else if constexpr ( std::is_same_v<T, SwapBuffersCmd>)
 			m_device.swap_buffers();
-
-		if constexpr ( std::is_same_v<T, ShutdownCmd>)
+		else if constexpr ( std::is_same_v<T, ShutdownCmd>)
 			this->shutdown_opengl();
+		else if constexpr ( std::is_same_v<T, LoadShaderCmd>)
+			this->load_shader(  std::move(c) );
+		else if constexpr ( std::is_same_v<T, DestroyShaderCmd>)
+			m_device.destroy_shader(c.hdl);
+		else
+		{
+            VV_ASSERT( false, "unhandled RenderCmd alternative in execute_cmd" );
+		}
 
-	}, cmd);
+	}, std::move(cmd) );
 }
 
 void RenderingSystem::send_render_command(RenderCmd &&cmd)
@@ -116,3 +123,12 @@ void RenderingSystem::shutdown_opengl()
 	m_device.shutdown();
 	m_worker_running = false;
 }
+
+void RenderingSystem::load_shader( LoadShaderCmd &&cmd )
+{
+	auto maybe_shader = m_device.create_shader(cmd.vs_source, cmd.fs_source);
+
+	cmd.promise.set_value(maybe_shader);
+}
+
+} // namespace vv

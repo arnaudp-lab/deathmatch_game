@@ -101,7 +101,7 @@ void GPUDevice::swap_buffers()
 	SDL_GL_SwapWindow(m_state->sdl_window);
 }
 
-Handle<gpu::VertexArray> GPUDevice::create_vertex_array(
+Res<VertexArrayHandle> GPUDevice::create_vertex_array(
 	const gpu::VertexBufferDesc        &vbo_1_desc,
 	const gpu::BufferData              &vbo_1_data,
 	const Opt<gpu::VertexBufferDesc>   &vbo_2_desc,
@@ -112,12 +112,14 @@ Handle<gpu::VertexArray> GPUDevice::create_vertex_array(
 {
 	auto res = gpu::_create_vertex_array(vbo_1_desc, vbo_1_data, vbo_2_desc, vbo_2_data, index_buffer_int_size, index_buffer_data);
 
-	if(!res.ok())
+	if(!res.is_ok())
 	{
-		return Handle<gpu::VertexArray>::null();
+		return Res<VertexArrayHandle>::fail(res.err());
 	}
 
-	return m_vertex_arrays.push( std::move(res.value()) );
+	VertexArrayHandle hdl = m_vertex_arrays.push( std::move(res.value()) );
+
+	return Res<VertexArrayHandle>::ok(hdl);
 }
 
 void GPUDevice::destroy_vertex_array(const Handle<gpu::VertexArray> &hdl)
@@ -127,19 +129,21 @@ void GPUDevice::destroy_vertex_array(const Handle<gpu::VertexArray> &hdl)
 	m_vertex_arrays.del(hdl);
 }
 
-Handle<gpu::Shader> GPUDevice::create_shader(
+Res<ShaderHandle> GPUDevice::create_shader(
 	const std::string &vs_source,
 	const std::string &fs_source
 )
 {
 	auto res = gpu::_create_shader(vs_source, fs_source);
 
-	if(!res.ok())
+	if(!res.is_ok())
 	{
-		return Handle<gpu::Shader>::null();
+		return Res<ShaderHandle>::fail(res.err());
 	}
 
-	return m_shaders.push( std::move(res.value()) );
+	ShaderHandle hdl = m_shaders.push( std::move(res.value()) );
+
+	return Res<ShaderHandle>::ok(hdl);
 }
 
 void GPUDevice::destroy_shader(const Handle<gpu::Shader> &hdl)

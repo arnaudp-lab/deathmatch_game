@@ -25,19 +25,24 @@ struct SwapBuffersCmd
 	// empty
 };
 
-struct LoadShader
+struct LoadShaderCmd
 {
-	std::string vs_path;
-	std::string fs_path;
-	// TODO: wrap inside Res. [ require changing the gpu_device to propagate errors ]
-	std::promise<Handle<gpu::Shader>> promise;
+	std::string vs_source {};
+	std::string fs_source {};
+	std::promise<Res<ShaderHandle>> promise {};
+};
+
+struct DestroyShaderCmd
+{
+	ShaderHandle hdl;
 };
 
 using RenderCmd = std::variant<
 	InitializeCmd,
 	ShutdownCmd,
-	LoadShader,
-	SwapBuffersCmd
+	LoadShaderCmd,
+	SwapBuffersCmd,
+	DestroyShaderCmd
 >;
 
 } // namespace vv

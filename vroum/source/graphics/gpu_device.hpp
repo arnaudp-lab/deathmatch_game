@@ -9,6 +9,9 @@
 namespace vv
 {
 
+using ShaderHandle = Handle<gpu::Shader>;
+using VertexArrayHandle = Handle<gpu::VertexArray>;
+
 class GPUDevice
 {
 public:
@@ -21,7 +24,7 @@ public:
 
     void swap_buffers();
 
-    Handle<gpu::VertexArray> create_vertex_array(
+    Res<VertexArrayHandle> create_vertex_array(
         const gpu::VertexBufferDesc        &vbo_1_desc,
         const gpu::BufferData              &vbo_1_data,
         const Opt<gpu::VertexBufferDesc>   &vbo_2_desc,
@@ -29,13 +32,13 @@ public:
         const Opt<gpu::IndexBufferIntType> &index_buffer_int_size,
         const Opt<gpu::BufferData>         &index_buffer_data
     );
-    void destroy_vertex_array(const Handle<gpu::VertexArray> &hdl);
+    void destroy_vertex_array(const VertexArrayHandle &hdl);
 
-    Handle<gpu::Shader> create_shader(
+    Res<ShaderHandle> create_shader(
         const std::string &vs_source,
         const std::string &fs_source
     );
-    void destroy_shader(const Handle<gpu::Shader> &hdl);
+    void destroy_shader(const ShaderHandle &hdl);
 
 private:
     struct InternalState;

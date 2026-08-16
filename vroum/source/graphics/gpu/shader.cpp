@@ -44,8 +44,8 @@ Res<Shader> _create_shader(
 	auto vs = compile_shader(vs_source, GL_VERTEX_SHADER);
 	auto fs = compile_shader(fs_source, GL_FRAGMENT_SHADER);
 
-	if(!vs.ok()) return Res<Shader>::fail(vs.err());
-	if(!fs.ok()) return Res<Shader>::fail(fs.err());
+	if(!vs.is_ok()) return Res<Shader>::fail(vs.err());
+	if(!fs.is_ok()) return Res<Shader>::fail(fs.err());
 
 	res.id = glCreateProgram();
 	glAttachShader(res.id, vs.value());

@@ -9,6 +9,7 @@ vv::EngineParameters load_params()
 	params.window_height = 1080;
 	params.window_width = 1920;
 	params.window_title = "ECO+ Deathmatch";
+	params.resources_root = "../resources";
 
 	return params;
 }

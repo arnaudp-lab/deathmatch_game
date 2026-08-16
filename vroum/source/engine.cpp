@@ -21,7 +21,7 @@ Error Engine::add_layer( Box<Layer> &&layer )
 {
 	layer->m_app = this;
 	// Todo: only for debugging, remove once the Scene / Pipeline is defined
-	layer->m_rend = &m_graphics_sys;
+	layer->m_res = &m_resource_manager;
 	layer->m_win = &m_window_sys;
 
 	Error err = layer->init();
@@ -107,6 +107,9 @@ Error Engine::init_systems()
 		shutdown_systems();
 		return err;
 	}
+
+	// Note: no errors
+	m_resource_manager.init(m_params.resources_root, &m_graphics_sys);
 
 	return Error::ok;
 }

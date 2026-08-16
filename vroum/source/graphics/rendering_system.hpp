@@ -35,7 +35,9 @@ private:
 
 	void worker_loop();
 
-	void execute_cmd( const RenderCmd &cmd);
+	void execute_cmd( RenderCmd &&cmd );
+
+	void load_shader( LoadShaderCmd &&cmd );
 
 	// Just call m_device.init/shutdown, used as rendercommand callback
 	void init_opengl( WindowSystem *window_sys );

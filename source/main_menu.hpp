@@ -1,3 +1,4 @@
+#include "graphics/gpu_device.hpp"
 #include "vv.hpp"
 
 class MainMenu: public vv::Layer
@@ -17,4 +18,5 @@ public:
 
 private:
 	float m_time;
+	vv::ShaderHandle test_handle;
 };

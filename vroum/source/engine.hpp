@@ -1,7 +1,7 @@
 #pragma once
 
+#include "resource_manager/resource_manager.hpp"
 #include "vv_headers.hpp"
-#include "core/logger.hpp"
 #include "layer.hpp"
 #include "window/window_system.hpp"
 #include "graphics/rendering_system.hpp"
@@ -29,8 +29,9 @@ public:
 	void run();
 
 private:
-	WindowSystem m_window_sys;
+	WindowSystem    m_window_sys;
 	RenderingSystem m_graphics_sys;
+	ResourceManager m_resource_manager;
 
 	EngineParameters m_params;
 

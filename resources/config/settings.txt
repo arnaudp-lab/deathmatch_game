@@ -1,0 +1,7 @@
+i fps_cap = 1
+i fullscreen = 0
+i fps = 60
+i window_width = 1280
+i window_height = 720
+s title = FPS DaTA
+f sensitivity = 1.0

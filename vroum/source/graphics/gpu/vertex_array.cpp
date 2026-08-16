@@ -129,7 +129,7 @@ Res<VertexArray> _create_vertex_array(
 	// First VBO - create, bind and specify layout
 	auto maybe_vbo_1 = attach_vbo(res.vertex_array_id, 0, vbo_1_desc, vbo_1_data);
 
-	if( !maybe_vbo_1.ok() )
+	if( !maybe_vbo_1.is_ok() )
 	{
 		VV_ERROR("Could not create or bind the vertex buffer");
 		_destroy_vertex_array(res);
@@ -143,7 +143,7 @@ Res<VertexArray> _create_vertex_array(
 	{
 		auto maybe_vbo_2 = attach_vbo(res.vertex_array_id, 1, vbo_2_desc.value(), vbo_2_data.value());
 
-		if( !maybe_vbo_2.ok() )
+		if( !maybe_vbo_2.is_ok() )
 		{
 			VV_ERROR("Could not create or bind the vertex buffer");
 			_destroy_vertex_array(res);

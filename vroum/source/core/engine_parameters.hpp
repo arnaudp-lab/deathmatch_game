@@ -15,6 +15,7 @@ struct EngineParameters
 	u32 fps = 30;
 	float sensitivity = 0.05f;
 	std::string window_title = "ECO+ Deathmatch ULTIMATE";
+	std::string resources_root = "./";
 };
 
 } // namespace vv

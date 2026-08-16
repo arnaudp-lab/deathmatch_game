@@ -1,6 +1,7 @@
 #pragma once
 
 #include "window/window_system.hpp"
+#include "resource_manager/resource_manager.hpp"
 #include "vv_headers.hpp"
 
 namespace vv
@@ -28,7 +29,7 @@ public:
 
 protected:
 	Engine *m_app;
-	RenderingSystem *m_rend;
+	ResourceManager *m_res;
 	WindowSystem *m_win;
 };
 
