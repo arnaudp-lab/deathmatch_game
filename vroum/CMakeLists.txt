@@ -21,6 +21,10 @@ target_sources( vroum PRIVATE
 
   source/graphics/gl/vertex_array.cpp
   source/graphics/gl/vertex_array.hpp
+  source/graphics/gl/shader.cpp
+  source/graphics/gl/shader.hpp
+  source/graphics/gl/gldebug.cpp
+  source/graphics/gl/gldebug.hpp
 
   source/graphics/gpu_device.cpp
   source/graphics/gpu_device.hpp

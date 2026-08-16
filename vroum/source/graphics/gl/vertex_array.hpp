@@ -38,6 +38,7 @@ struct VertexArray
 	u32 vertex_buffer_2_id = 0;
 	u32 vertex_array_id    = 0;
 	u32 index_buffer_id    = 0;
+	IndexBufferIntType index_buffer_int_type {};
 };
 
 struct BufferData
@@ -46,7 +47,7 @@ struct BufferData
     u32 size_bytes = 0;
 };
 
-Res<VertexArray> create_vertex_array(
+Res<VertexArray> _create_vertex_array(
 	const VertexBufferDesc        &vbo_1_desc,
 	const BufferData              &vbo_1_data,
 	const Opt<VertexBufferDesc>   &vbo_2_desc,
@@ -55,6 +56,6 @@ Res<VertexArray> create_vertex_array(
 	const Opt<BufferData>         &index_buffer_data
 );
 
-void delete_vertex_array( VertexArray &vertex_array );
+void _destroy_vertex_array( VertexArray &vertex_array );
 
 } // namespace vv

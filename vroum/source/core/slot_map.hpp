@@ -1,6 +1,7 @@
 #pragma once
 
 #include "vv_headers.hpp"
+#include <limits>
 #include <vector>
 
 namespace vv
@@ -9,6 +10,8 @@ namespace vv
 template <typename T>
 struct Handle
 {
+    static Handle<T> null() { return {.id = std::numeric_limits<u32>::max(), .gen=0}; };
+
     u32 id;
     u32 gen;
 };
@@ -30,7 +33,7 @@ public:
         {
             m_elements.push_back( std::move(el) );
             m_generations.push_back( 0 );
-            return Handle<T>{.id=m_elements.size()-1, .gen=0};
+            return Handle<T>{.id=(u32)m_elements.size()-1, .gen=0};
         }
         else
         {
