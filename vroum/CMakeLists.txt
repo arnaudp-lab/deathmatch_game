@@ -48,6 +48,8 @@ target_sources( vroum PRIVATE
   source/layer.hpp
   source/engine.cpp
   source/engine.hpp
+  source/run_application.hpp
+  source/run_application.cpp
 )
 
 # Do not build any example / tests

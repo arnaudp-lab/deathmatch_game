@@ -1,6 +1,6 @@
-#include "core/errors.hpp"
 #include "vv.hpp"
 #include "main_menu.hpp"
+#include <memory>
 
 vv::EngineParameters load_params()
 {
@@ -14,21 +14,11 @@ vv::EngineParameters load_params()
 	return params;
 }
 
-int main() {
-	
+int main()
+{
 	auto params = load_params();
 
-	vv::Engine application (params);
-
-	vv::Error err = vv::Error::ok;
-	
-	err = application.init_systems();
-
-	err = application.add_layer( std::make_unique<MainMenu>() );
-
-	application.run();
-
-	application.shutdown_systems();
+	vv::run_application(params, std::make_unique<MainMenu>());
 	
 	return 0;
 }
