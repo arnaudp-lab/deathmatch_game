@@ -1,31 +1,47 @@
 #include "gldebug.hpp"
+#include "core/errors.hpp"
 #include "core/logger.hpp"
 #include <glad/glad.h>
 
-void _log_gl_errors(int line, const char* file)
+namespace vv
 {
-	GLenum error_flag = GL_NO_ERROR;
-	while((error_flag = glGetError()) != GL_NO_ERROR)
-	{
-		VV_ERROR("OpenGL Error in file: ", file, " at line", line, ": ");
-		switch(error_flag)
-		{
-			case GL_INVALID_ENUM:
-				VV_ERROR("GL_INVALID_ENUM");
-				break;
-			case GL_INVALID_VALUE:
-				VV_ERROR("GL_INVALID_VALUE");
-				break;
-			case GL_INVALID_OPERATION:
-				VV_ERROR("GL_INVALID_OPERATION");
-				break;
-			case GL_OUT_OF_MEMORY:
-				VV_ERROR("GL_OUT_OF_MEMORY");
-				break;
-			case GL_INVALID_FRAMEBUFFER_OPERATION:
-				VV_ERROR("GL_INVALID_FRAMEBUFFER_OPERATION");
-				break;
-			default: break;
-		}
-	}
+
+namespace gl_debug
+{
+
+static bool is_ok = true;
+
+void GLAPIENTRY gl_debug_message_callback(
+    GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+    GLsizei length,
+	const GLchar* message,
+	const void* userParam
+)
+{
+    if( severity == GL_DEBUG_SEVERITY_NOTIFICATION )
+        return;   // don't touch is_ok & don't log
+
+    is_ok = false;
+    VV_ERROR(
+        "GL CALLBACK: ", (type == GL_DEBUG_TYPE_ERROR ? "GL ERROR" : "GL WARNING"),
+        " severity=", severity, " message=", message
+    );
 }
+
+void gl_debug_reset_ok()
+{
+	is_ok = true;
+}
+
+bool gl_debug_is_ok()
+{
+	return is_ok;
+}
+
+
+} // namespace gl_debug
+
+} // namespace vv

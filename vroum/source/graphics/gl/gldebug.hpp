@@ -1,9 +1,25 @@
 #pragma once
 
-void _log_gl_errors(int line, const char* file);
+#include <glad/glad.h>
 
-#ifndef NDEBUG
-#define log_gl_errors() _log_gl_errors(__LINE__, __FILE__)
-#else
-#define log_gl_errors() 
-#endif
+namespace vv
+{
+
+namespace gl_debug
+{
+
+void GLAPIENTRY gl_debug_message_callback(
+	GLenum source,
+	GLenum type,
+	GLuint id,
+	GLenum severity,
+	GLsizei length,
+	const GLchar* message,
+	const void* userParam );
+
+void gl_debug_reset_ok();
+bool gl_debug_is_ok();
+
+} // namespace gl_debug
+
+} // namespace vv

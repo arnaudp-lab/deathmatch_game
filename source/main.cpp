@@ -23,11 +23,7 @@ int main() {
 	
 	err = application.init_systems();
 
-	VV_ERROR("Any Error ?: ", vv::get_err_msg(err) );
-
-	err = application.add_layer<MainMenu>();
-
-	VV_ERROR("Any Error ?: ", vv::get_err_msg(err) );
+	err = application.add_layer( std::make_unique<MainMenu>() );
 
 	application.run();
 

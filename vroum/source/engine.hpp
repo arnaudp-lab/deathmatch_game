@@ -24,26 +24,7 @@ public:
 	Error init_systems();
 	void shutdown_systems();
 
-	template <typename LayerType>
-	Error add_layer()
-	{
-		auto layer_ptr = std::make_unique<LayerType>();
-		layer_ptr->m_app = this;
-		// Todo: only for debugging, remove once the Scene / Pipeline is defined
-		layer_ptr->m_rend = &m_graphics_sys;
-		layer_ptr->m_win = &m_window_sys;
-
-		Error err = layer_ptr->init();
-		if( err!= Error::ok )
-		{
-			VV_ERROR("Could not initialize layer");
-			return err;
-		}
-
-		m_layers.push_back( std::move(layer_ptr) );
-
-		return Error::ok;
-	}
+	Error add_layer( Box<Layer> &&layer );
 
 	void run();
 

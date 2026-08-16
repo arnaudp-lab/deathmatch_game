@@ -19,6 +19,9 @@ target_sources( vroum PRIVATE
   source/window/window_system.cpp
   source/window/window_system.hpp
 
+  source/graphics/gl/vertex_array.cpp
+  source/graphics/gl/vertex_array.hpp
+
   source/graphics/gpu_device.cpp
   source/graphics/gpu_device.hpp
   source/graphics/rendering_system.cpp
@@ -31,6 +34,7 @@ target_sources( vroum PRIVATE
   source/core/errors.cpp
   source/core/engine_parameters.hpp
   source/core/engine_parameters.hpp
+  source/core/slot_map.hpp
 
   source/layer.hpp
   source/engine.cpp

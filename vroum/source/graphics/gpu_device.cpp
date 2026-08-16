@@ -3,6 +3,7 @@
 #include <SDL3/SDL_video.h>
 #include <thread>
 #include <glad/glad.h>
+#include "gl/gldebug.hpp"
 
 namespace vv
 {
@@ -16,6 +17,7 @@ struct GPUDevice::InternalState
 };
 
 GPUDevice::GPUDevice() : m_state( std::make_unique<InternalState>() ) {  }
+
 GPUDevice::~GPUDevice() = default;
 
 Error GPUDevice::init( WindowSystem *sys )
@@ -69,6 +71,12 @@ Error GPUDevice::init( WindowSystem *sys )
 	glViewport(0, 0, w_width, w_height);
 
 	m_state->initialized = true;
+
+#ifndef NDEBUG
+	glEnable( GL_DEBUG_OUTPUT );
+	glEnable( GL_DEBUG_OUTPUT_SYNCHRONOUS );
+	glDebugMessageCallback( gl_debug::gl_debug_message_callback, 0 );
+#endif
 
 	return Error::ok;
 }

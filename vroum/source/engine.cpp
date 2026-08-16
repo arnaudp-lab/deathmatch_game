@@ -17,6 +17,25 @@ Engine::~Engine()
 {
 }
 
+Error Engine::add_layer( Box<Layer> &&layer )
+{
+	layer->m_app = this;
+	// Todo: only for debugging, remove once the Scene / Pipeline is defined
+	layer->m_rend = &m_graphics_sys;
+	layer->m_win = &m_window_sys;
+
+	Error err = layer->init();
+	if( err!= Error::ok )
+	{
+		VV_ERROR("Could not initialize layer");
+		return err;
+	}
+
+	m_layers.push_back( std::move(layer) );
+
+	return Error::ok;
+}
+
 void Engine::run()
 {
 	auto current_time = std::chrono::steady_clock::now();

@@ -1,77 +1,60 @@
 #pragma once
 
-#include "vvtypes.hpp"
+#include "vv_headers.hpp"
 #include <vector>
+
+namespace vv
+{
 
 enum class LayoutDataType
 {
-	FLOAT, INT, UINT
+	f32, i32, u32, u8, u16
 };
 
-struct LayoutDescription
+enum class IndexBufferIntType
 {
-	LayoutDescription(
-		uint32_t location,
-		uint32_t count,
-		uint32_t offset,
-		uint32_t stride,
-		LayoutDataType type,
-		bool per_instance = false):
-		location(location), count(count), offset(offset), stride(stride), type(type), per_instance(per_instance)
-	{}
-
-	uint32_t location;
-	uint32_t count;
-	uint32_t offset;
-	uint32_t stride;
-	LayoutDataType type;
-	bool per_instance = false;
+	integer, short_integer
 };
 
-class IndexBuffer
+struct AttributeDesc
 {
-public:
-	friend class VertexArray;
-
-	IndexBuffer( const uint32_t *indices, size_t count );
-	~IndexBuffer();
-
-	void bind() const;
-	void unbind() const;
-
-private:
-	uint32_t m_id = 0;
+    u32 location;
+    u32 count;
+    u32 offset;
+    LayoutDataType type;
+	bool normalized = false;
+    bool per_instance = false;
 };
 
-class VertexBuffer
+struct VertexBufferDesc
 {
-public:
-	friend class VertexArray;
-
-	VertexBuffer( const void *vertices_data, size_t size );
-	~VertexBuffer();
-
-	void bind() const;
-	void unbind() const;
-
-private:
-	uint32_t m_id = 0;
+    u32 stride;
+    std::vector<AttributeDesc> attributes;
 };
 
-class VertexArray
+struct VertexArray
 {
-public:
-	VertexArray();
-	~VertexArray();
-
-	void set_index_buffer( const Ref<IndexBuffer> &index_buffer );
-	void add_vertex_buffer( const Ref<VertexBuffer> &vertex_buffer, const std::vector<LayoutDescription> &layout );
-
-	void bind() const;
-	void unbind() const;
-	
-private:
-	Ref<IndexBuffer> m_index_buffer = nullptr;
-	std::vector< Ref<VertexBuffer> > m_buffers;
-	uint32_t m_id = 0;
+	u32 vertex_buffer_1_id = 0;
+	u32 vertex_buffer_2_id = 0;
+	u32 vertex_array_id    = 0;
+	u32 index_buffer_id    = 0;
 };
+
+struct BufferData
+{
+    const void *data = nullptr;
+    u32 size_bytes = 0;
+};
+
+Res<VertexArray> create_vertex_array(
+	const VertexBufferDesc        &vbo_1_desc,
+	const BufferData              &vbo_1_data,
+	const Opt<VertexBufferDesc>   &vbo_2_desc,
+	const Opt<BufferData>         &vbo_2_data,
+	const Opt<IndexBufferIntType> &index_buffer_int_size,
+	const Opt<BufferData>         &index_buffer_data
+);
+
+void delete_vertex_array( VertexArray &vertex_array );
+
+} // namespace vv

@@ -5,6 +5,7 @@
 #include <memory>
 #include <optional>
 
+#include "core/logger.hpp"
 #include "core/errors.hpp"
 #include "core/results.hpp"
 
