@@ -6,6 +6,9 @@
 namespace vv
 {
 
+namespace gpu
+{
+
 enum class LayoutDataType
 {
 	f32, i32, u32, u8, u16
@@ -57,5 +60,7 @@ Res<VertexArray> _create_vertex_array(
 );
 
 void _destroy_vertex_array( VertexArray &vertex_array );
+
+} // namespace gpu
 
 } // namespace vv

@@ -1,6 +1,5 @@
 #include "SDL3/SDL_events.h"
 #include "SDL3/SDL_init.h"
-#include "SDL3/SDL_scancode.h"
 #include "core/engine_parameters.hpp"
 #include "window_system.hpp"
 #include "sdl_wrapper.hpp"

@@ -28,7 +28,7 @@ public:
 
 	void shutdown();
 
-	void send_render_command( const RenderCmd &cmd );
+	void send_render_command( RenderCmd &&cmd );
 	
 private:
 	void start_thread();

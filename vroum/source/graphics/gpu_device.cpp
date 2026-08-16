@@ -1,11 +1,11 @@
 #include "gpu_device.hpp"
+
 #include "core/logger.hpp"
-#include <SDL3/SDL_video.h>
+#include "graphics/gpu/gldebug.hpp"
+
 #include <thread>
+#include <SDL3/SDL_video.h>
 #include <glad/glad.h>
-#include "gl/gldebug.hpp"
-#include "graphics/gl/shader.hpp"
-#include "graphics/gl/vertex_array.hpp"
 
 namespace vv
 {
@@ -101,51 +101,51 @@ void GPUDevice::swap_buffers()
 	SDL_GL_SwapWindow(m_state->sdl_window);
 }
 
-Handle<VertexArray> GPUDevice::create_vertex_array(
-	const VertexBufferDesc        &vbo_1_desc,
-	const BufferData              &vbo_1_data,
-	const Opt<VertexBufferDesc>   &vbo_2_desc,
-	const Opt<BufferData>         &vbo_2_data,
-	const Opt<IndexBufferIntType> &index_buffer_int_size,
-	const Opt<BufferData>         &index_buffer_data
+Handle<gpu::VertexArray> GPUDevice::create_vertex_array(
+	const gpu::VertexBufferDesc        &vbo_1_desc,
+	const gpu::BufferData              &vbo_1_data,
+	const Opt<gpu::VertexBufferDesc>   &vbo_2_desc,
+	const Opt<gpu::BufferData>         &vbo_2_data,
+	const Opt<gpu::IndexBufferIntType> &index_buffer_int_size,
+	const Opt<gpu::BufferData>         &index_buffer_data
 )
 {
-	auto res = _create_vertex_array(vbo_1_desc, vbo_1_data, vbo_2_desc, vbo_2_data, index_buffer_int_size, index_buffer_data);
+	auto res = gpu::_create_vertex_array(vbo_1_desc, vbo_1_data, vbo_2_desc, vbo_2_data, index_buffer_int_size, index_buffer_data);
 
 	if(!res.ok())
 	{
-		return Handle<VertexArray>::null();
+		return Handle<gpu::VertexArray>::null();
 	}
 
-	return m_vertex_arrays.push( std::move(res.value) );
+	return m_vertex_arrays.push( std::move(res.value()) );
 }
 
-void GPUDevice::destroy_vertex_array(const Handle<VertexArray> &hdl)
+void GPUDevice::destroy_vertex_array(const Handle<gpu::VertexArray> &hdl)
 {
 	auto &vao = m_vertex_arrays.get(hdl);
-	_destroy_vertex_array(vao);
+	gpu::_destroy_vertex_array(vao);
 	m_vertex_arrays.del(hdl);
 }
 
-Handle<Shader> GPUDevice::create_shader(
+Handle<gpu::Shader> GPUDevice::create_shader(
 	const std::string &vs_source,
 	const std::string &fs_source
 )
 {
-	auto res = _create_shader(vs_source, fs_source);
+	auto res = gpu::_create_shader(vs_source, fs_source);
 
 	if(!res.ok())
 	{
-		return Handle<Shader>::null();
+		return Handle<gpu::Shader>::null();
 	}
 
-	return m_shaders.push( std::move(res.value) );
+	return m_shaders.push( std::move(res.value()) );
 }
 
-void GPUDevice::destroy_shader(const Handle<Shader> &hdl)
+void GPUDevice::destroy_shader(const Handle<gpu::Shader> &hdl)
 {
 	auto &shader = m_shaders.get(hdl);
-	_destroy_shader(shader);
+	gpu::_destroy_shader(shader);
 	m_shaders.del(hdl);
 }
 

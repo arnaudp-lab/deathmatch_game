@@ -19,19 +19,24 @@ target_sources( vroum PRIVATE
   source/window/window_system.cpp
   source/window/window_system.hpp
 
-  source/graphics/gl/vertex_array.cpp
-  source/graphics/gl/vertex_array.hpp
-  source/graphics/gl/shader.cpp
-  source/graphics/gl/shader.hpp
-  source/graphics/gl/gldebug.cpp
-  source/graphics/gl/gldebug.hpp
+  source/graphics/gpu/vertex_array.cpp
+  source/graphics/gpu/vertex_array.hpp
+  source/graphics/gpu/shader.cpp
+  source/graphics/gpu/shader.hpp
+  source/graphics/gpu/gldebug.cpp
+  source/graphics/gpu/gldebug.hpp
 
   source/graphics/gpu_device.cpp
   source/graphics/gpu_device.hpp
   source/graphics/rendering_system.cpp
   source/graphics/rendering_system.hpp
   source/graphics/render_cmd.hpp
+
+  source/resource_manager/resource_manager.hpp
+  source/resource_manager/resource_manager.cpp
   
+  source/core/utilities.cpp
+  source/core/utilities.hpp
   source/core/logger.cpp
   source/core/logger.hpp
   source/core/errors.hpp

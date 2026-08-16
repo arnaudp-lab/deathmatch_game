@@ -6,6 +6,9 @@
 namespace vv
 {
 
+namespace gpu
+{
+
 struct Shader
 {
 	u32 id = 0;
@@ -17,5 +20,7 @@ Res<Shader> _create_shader(
 );
 
 void _destroy_shader(const Shader &shader);
+
+} // namespace gpu
 
 } // namespace vv

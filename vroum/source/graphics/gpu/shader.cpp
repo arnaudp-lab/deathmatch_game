@@ -7,6 +7,9 @@
 namespace vv
 {
 
+namespace gpu
+{
+
 Res<u32> compile_shader(const std::string &source, GLuint shader_type)
 {
 	auto c_str_source = source.c_str();
@@ -22,10 +25,10 @@ Res<u32> compile_shader(const std::string &source, GLuint shader_type)
 		glGetShaderInfoLog(shader_id, 512, nullptr, infos);
 		VV_ERROR("Impossible de compiler le shader: ", infos);
 		glDeleteShader(shader_id);
-		return {.err = Error::gpu_shader_compile_failed, .value=0};
+		return Res<u32>::fail(Error::gpu_shader_compile_failed);
 	}
 
-	return {.err = Error::ok, .value=shader_id};
+	return Res<u32>::ok(shader_id);
 }
 
 Res<Shader> _create_shader(
@@ -41,15 +44,15 @@ Res<Shader> _create_shader(
 	auto vs = compile_shader(vs_source, GL_VERTEX_SHADER);
 	auto fs = compile_shader(fs_source, GL_FRAGMENT_SHADER);
 
-	if(!vs.ok()) return {.err = vs.err, .value=res};
-	if(!fs.ok()) return {.err = fs.err, .value=res};
+	if(!vs.ok()) return Res<Shader>::fail(vs.err());
+	if(!fs.ok()) return Res<Shader>::fail(fs.err());
 
 	res.id = glCreateProgram();
-	glAttachShader(res.id, vs.value);
-	glAttachShader(res.id, fs.value);
+	glAttachShader(res.id, vs.value());
+	glAttachShader(res.id, fs.value());
 	glLinkProgram(res.id);
-	glDeleteShader(vs.value);
-	glDeleteShader(fs.value);
+	glDeleteShader(vs.value());
+	glDeleteShader(fs.value());
 
 	int success;
 	glGetProgramiv(res.id, GL_LINK_STATUS, &success);
@@ -59,16 +62,16 @@ Res<Shader> _create_shader(
 		glGetProgramInfoLog(res.id, 512, nullptr, info);
 		VV_ERROR("Impossible de lier les shaders: ", info);
 		_destroy_shader(res);
-		return {.err=Error::gpu_shader_link_failed, .value=res};
+		return Res<Shader>::fail(Error::gpu_shader_link_failed);
 	}
 
 	if(!gl_debug::gl_debug_is_ok())
 	{
 		_destroy_shader(res);
-		return {.err=Error::gpu_shader_creation_failed, .value=res};
+		return Res<Shader>::fail(Error::gpu_shader_creation_failed);
 	}
 
-	return {.err = Error::ok, .value=res};
+	return Res<Shader>::ok(res);
 }
 
 void _destroy_shader(const Shader &shader)
@@ -76,6 +79,6 @@ void _destroy_shader(const Shader &shader)
 	glDeleteProgram(shader.id);
 }
 
+} // namespace gpu
+
 } // namespace vv
-
-

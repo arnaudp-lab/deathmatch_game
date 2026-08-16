@@ -71,8 +71,7 @@ void Engine::run()
 		}
 
 		// Swap buffers
-		RenderCmd cmd (RenderCmdType::swap_buffers, SwapBuffers());
-		m_graphics_sys.send_render_command(cmd);
+		m_graphics_sys.send_render_command(SwapBuffersCmd{});
 
 		// Check if we should still be running
 		m_running = !m_window_sys.should_close();

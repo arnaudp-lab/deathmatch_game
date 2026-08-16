@@ -7,6 +7,9 @@
 namespace vv
 {
 
+namespace gpu
+{
+	
 static GLuint get_opengl_type( const LayoutDataType &type )
 {
 	switch(type)
@@ -95,7 +98,7 @@ static Res<u32> attach_vbo(u32 vao, u32 binding_index, const VertexBufferDesc &v
 		
 	}
 
-	return Res<u32>{Error::ok, vbo};
+	return Res<u32>::ok(vbo);
 }
 
 Res<VertexArray> _create_vertex_array(
@@ -130,10 +133,10 @@ Res<VertexArray> _create_vertex_array(
 	{
 		VV_ERROR("Could not create or bind the vertex buffer");
 		_destroy_vertex_array(res);
-		return Res<VertexArray>{.err = maybe_vbo_1.err, .value=res};
+		return Res<VertexArray>::fail(maybe_vbo_1.err());
 	}
 
-	res.vertex_buffer_1_id = maybe_vbo_1.value;
+	res.vertex_buffer_1_id = maybe_vbo_1.value();
 
 	// Second VBO - create, bind and specify layout
 	if( (vbo_2_data.has_value() && (vbo_2_desc.has_value())) )
@@ -144,10 +147,10 @@ Res<VertexArray> _create_vertex_array(
 		{
 			VV_ERROR("Could not create or bind the vertex buffer");
 			_destroy_vertex_array(res);
-			return Res<VertexArray>{.err = maybe_vbo_2.err, .value=res};
+			return Res<VertexArray>::fail(maybe_vbo_2.err());
 		}
 
-		res.vertex_buffer_2_id = maybe_vbo_2.value;
+		res.vertex_buffer_2_id = maybe_vbo_2.value();
 	}
 
 	// Index Buffer
@@ -163,10 +166,10 @@ Res<VertexArray> _create_vertex_array(
 	if( !gl_debug::gl_debug_is_ok() )
 	{
 		_destroy_vertex_array(res);
-		return {.err=Error::gpu_vertex_array_creation_failed, .value=res};
+		return Res<VertexArray>::fail(Error::gpu_vertex_array_creation_failed);
 	}
 
-	return {Error::ok, res};
+	return Res<VertexArray>::ok(res);
 }
 
 void _destroy_vertex_array( VertexArray &vertex_array )
@@ -176,5 +179,7 @@ void _destroy_vertex_array( VertexArray &vertex_array )
 	glDeleteBuffers(1, &vertex_array.vertex_buffer_2_id);
 	glDeleteVertexArrays(1, &vertex_array.vertex_array_id);
 }
+
+} // namespace gpu
 
 } // namespace vv

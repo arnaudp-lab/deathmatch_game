@@ -1,7 +1,9 @@
 #include "core/logger.hpp"
+#include "graphics/render_cmd.hpp"
 #include "vv_headers.hpp"
 #include "rendering_system.hpp"
 #include <glad/glad.h>
+#include <type_traits>
 
 using namespace vv;
 
@@ -37,40 +39,39 @@ void RenderingSystem::worker_loop()
 			}
 			
 			// Get the command at the front
-			cmd = m_command_queue.front();
+			cmd = std::move(m_command_queue.front());
 			m_command_queue.pop_front();
 
 		} // we now have the command, we can let other thread send messages again
 		
 		// Execute the command
-		execute_cmd(cmd);
+		execute_cmd( std::move(cmd) );
 	}
 }
 
 void RenderingSystem::execute_cmd(const RenderCmd &cmd)
 {
-	switch(cmd.type)
+	std::visit( [this](auto &&c )
 	{
-	case RenderCmdType::initialize:
-		this->init_opengl(std::get< Ref<InitializeCmd> >(cmd.data)->window);
-		break;
-	case RenderCmdType::shutdown:
-		this->shutdown_opengl();
-		break;
-	case RenderCmdType::swap_buffers:
-		m_device.swap_buffers();
-		break;
-	default:
-		VV_WARN("Unknown command type passed to the rendering system: ", static_cast<int>(cmd.type) );
-		break;
-	}
+		using T = std::decay_t<decltype(c)>;
+
+		if constexpr ( std::is_same_v<T, InitializeCmd>)
+			this->init_opengl( c.window );
+
+		if constexpr ( std::is_same_v<T, SwapBuffersCmd>)
+			m_device.swap_buffers();
+
+		if constexpr ( std::is_same_v<T, ShutdownCmd>)
+			this->shutdown_opengl();
+
+	}, cmd);
 }
 
-void RenderingSystem::send_render_command(const RenderCmd &cmd)
+void RenderingSystem::send_render_command(RenderCmd &&cmd)
 {
 	{
 		std::lock_guard<std::mutex> lock(m_mtx); 	
-		m_command_queue.push_back(cmd);
+		m_command_queue.push_back(std::move(cmd) );
 	}
 	m_cv.notify_one();
 }
@@ -82,8 +83,7 @@ Error RenderingSystem::init( WindowSystem *window_sys )
 
 	// immediatly send a command to the opengl thread
 	// that tells it to initialize opengl on its end
-	RenderCmd cmd (RenderCmdType::initialize, std::make_shared<InitializeCmd>(window_sys));
-	send_render_command(cmd);
+	send_render_command( InitializeCmd{.window=window_sys} );
 
 	return Error::ok;
 }
@@ -95,7 +95,7 @@ void RenderingSystem::shutdown()
 		m_command_queue.clear();
 	}
 	
-	send_render_command(RenderCmd(RenderCmdType::shutdown, ShutdownCmd()));
+	send_render_command(ShutdownCmd{});
 
 	m_gpu_thread.join();
 }
